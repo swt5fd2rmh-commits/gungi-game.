@@ -1,0 +1,288 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>Gungi Touch — Rulebook Edition</title><style>
+:root{color-scheme:dark;--bg:#101722;--panel:#1c2938;--line:#3b5268;--blue:#67b8ff;--red:#ff7777}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f0f5fa;font:15px system-ui,-apple-system,sans-serif;padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom)}main{max-width:850px;margin:auto}h1{font-size:24px;margin:12px 0 4px}.muted{color:#b2c2d2;font-size:13px}header,.toolbar,.status{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:9px 0}button,select{background:#29415a;border:1px solid #54718d;color:white;border-radius:9px;padding:9px;font:inherit;touch-action:manipulation}button:disabled{opacity:.35}.status{background:var(--panel);padding:10px;border-radius:10px}.board{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));border:2px solid #a8a096;aspect-ratio:1;user-select:none;touch-action:manipulation}.sq{position:relative;border:1px solid #927b60;background:#dbc39b;border-radius:0;padding:0;min-width:0;display:flex;align-items:center;justify-content:center;color:#192633}.sq:nth-child(odd){background:#d3b68d}.sq.territory{box-shadow:inset 0 0 0 2px #ffffff20}.sq.selected{background:#f6e087}.sq.legal:after{content:"";position:absolute;inset:35%;border-radius:50%;background:#2a9c63a6;pointer-events:none}.sq.capture:after{content:"";position:absolute;inset:6%;border:3px solid #c83636;border-radius:50%;pointer-events:none}.token{position:absolute;display:flex;align-items:center;justify-content:center;width:70%;height:70%;border-radius:7px;border:2px solid currentColor;font-size:clamp(10px,2.6vw,23px);font-weight:800;box-shadow:0 1px 2px #0008}.token.blue{color:#0761ae;background:#d7edff}.token.red{color:#a51f31;background:#ffe0e0}.token[data-level="0"]{transform:translateY(17%)}.token[data-level="1"]{transform:translateY(0) scale(.9)}.token[data-level="2"]{transform:translateY(-16%) scale(.8)}.count{position:absolute;bottom:1px;right:2px;font-size:10px;background:#111b;color:white;padding:1px 3px;border-radius:3px}.hand{display:flex;flex-wrap:wrap;gap:6px;padding:9px;background:var(--panel);border-radius:10px;margin:7px 0}.hand button{padding:7px 9px}.hand button.active{outline:3px solid #f2d16d}.hand .empty{color:#aab}.panels{display:grid;grid-template-columns:1fr 1fr;gap:8px}.panels>div{min-width:0}.blueText{color:var(--blue)}.redText{color:var(--red)}details{background:var(--panel);border-radius:10px;padding:12px;margin:10px 0}summary{font-weight:bold;cursor:pointer}#log{max-height:135px;overflow:auto;font-size:12px;line-height:1.6}.small{font-size:12px}#message{min-height:18px;color:#ffe5a0}@media(max-width:420px){.token{border-width:1px}.sq{border-width:.5px}button{padding:7px;font-size:13px}}
+
+:root{--gold:#f1cf83}body{background:radial-gradient(ellipse at top,#25384a,#0b101b 75%)}h1{color:var(--gold);letter-spacing:.05em}.board{border:5px ridge #9e7542;box-shadow:0 8px 25px #0008;border-radius:5px}.sq{background:linear-gradient(135deg,#e1c99d,#c7a979)!important}.sq:nth-child(2n){background:linear-gradient(135deg,#d7b888,#bd9b6d)!important}.sq:active{filter:brightness(1.15)}.token{transition:transform .2s ease,filter .2s;box-shadow:0 2px 5px #0009,inset 0 0 5px #fff5;clip-path:polygon(12% 0,88% 0,100% 15%,100% 85%,88% 100%,12% 100%,0 85%,0 15%)}.token.blue{background:linear-gradient(130deg,#e3f5ff,#82bbef);color:#153f75}.token.red{background:linear-gradient(130deg,#ffe7dd,#e78b87);color:#7c2030}.sq.legal{background:#d9d8a2!important}.sq.capture{background:#f1b7a0!important}.sq.last{box-shadow:inset 0 0 0 3px #ffe47a}.sq .coord{position:absolute;top:1px;left:2px;font-size:9px;color:#57442b;opacity:.6}.hand button{border-color:#8d795a}.toolbar label{display:inline-flex;align-items:center;gap:5px}.chip{background:#23364b;border:1px solid #60768c;border-radius:10px;padding:8px}.legend{display:flex;gap:10px;flex-wrap:wrap}.legend span{font-size:12px;color:#bac6d4}@keyframes dropin{from{opacity:.5;transform:translateY(-12px) scale(.75)}to{opacity:1}}.sq.last .token:last-of-type{animation:dropin .25s ease-out}@media(max-width:600px){.panels{grid-template-columns:1fr}.hand{max-height:125px;overflow:auto}.token{font-size:clamp(11px,3.2vw,21px)}}
+
+/* Small, readable piece name and tower-tier tooltip. */
+.sq[data-piece-tip]::before{content:attr(data-piece-tip);position:absolute;z-index:30;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);background:#111d2c;color:#fff4d9;border:1px solid #d5b879;border-radius:5px;padding:4px 7px;min-width:max-content;max-width:180px;font:600 11px/1.35 system-ui,-apple-system,sans-serif;box-shadow:0 3px 10px #0009;opacity:0;visibility:hidden;pointer-events:none;white-space:pre-line;text-align:center}
+.sq[data-piece-tip]:hover::before,.sq[data-piece-tip]:focus-visible::before,.sq.selected[data-piece-tip]::before{opacity:1;visibility:visible}
+@media(hover:none){.sq[data-piece-tip]:hover::before{opacity:0;visibility:hidden}.sq.selected[data-piece-tip]::before{opacity:1;visibility:visible}}
+</style><style id="ios-layout-fix">
+.game-layout{display:grid;grid-template-columns:minmax(145px,205px) minmax(0,1fr) minmax(145px,205px);align-items:start;gap:12px;margin:14px 0}.board-wrap{min-width:0}.board{width:100%!important;max-width:100%!important;aspect-ratio:1!important;margin:0!important}.side{background:#192a3c;border:1px solid #35485b;border-radius:13px;padding:10px;min-width:0}.side h2{font-size:16px;margin:0 0 6px}.side-note{font-size:12px;color:#aabbd0;margin:0 0 9px}.side .hand{display:flex;flex-direction:column;gap:6px;min-height:70px}.side .hand button{width:100%;min-height:40px;text-align:left;font-size:13px;padding:7px 8px;white-space:normal}.side .hand button.active{outline:3px solid #e5bf66}.sq{touch-action:manipulation}.side .hand button:disabled{opacity:.45}.side .hand button.depleted{opacity:.65;color:#b7c5d2;border-style:dashed;background:#1b2937}.side .hand button:not(:disabled){cursor:pointer}.game-layout .board{box-sizing:border-box}.game-layout .sq{min-width:0;min-height:0}
+@media(max-width:750px){.game-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.board-wrap{grid-column:1/-1;grid-row:1}.red-side{grid-column:1;grid-row:2}.blue-side{grid-column:2;grid-row:2}.side .hand{max-height:260px;overflow:auto}.side .hand button{font-size:12px}.side-note{display:none}}
+.side .hand{max-height:540px;overflow:auto}.board-wrap{align-self:start}.game-layout{grid-template-columns:minmax(150px,205px) minmax(0,1fr) minmax(150px,205px)}@media(min-width:751px){main{max-width:960px}}@media(max-width:750px){.game-layout{grid-template-columns:1fr 1fr}.board-wrap{grid-column:1/-1;grid-row:1}}
+</style><style id="gungi-motion">
+/* Purely visual enhancement: the existing board and control layout remain unchanged. */
+.sq.legal::after{animation:gungiLegal 1.35s ease-in-out infinite}.sq.capture::after{animation:gungiCapture 1.15s ease-in-out infinite}
+.sq.selected{animation:gungiSelected 1.4s ease-in-out infinite}
+@keyframes gungiLegal{0%,100%{opacity:.55;transform:scale(.75)}50%{opacity:1;transform:scale(1.18)}}
+@keyframes gungiCapture{0%,100%{opacity:.6;transform:scale(.88)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes gungiSelected{0%,100%{filter:brightness(1)}50%{filter:brightness(1.17)}}
+.gungi-ghost{position:fixed;z-index:9998;pointer-events:none;display:flex;align-items:center;justify-content:center;border:2px solid currentColor;border-radius:7px;font-weight:900;box-shadow:0 5px 14px #0008;will-change:transform,opacity;transform-origin:center;}
+.gungi-ghost.blue{color:#153f75;background:linear-gradient(130deg,#e3f5ff,#82bbef)}.gungi-ghost.red{color:#7c2030;background:linear-gradient(130deg,#ffe7dd,#e78b87)}
+.gungi-impact{position:fixed;z-index:9997;border:3px solid #ff8a60;border-radius:50%;pointer-events:none;animation:gungiImpact .42s ease-out forwards}
+@keyframes gungiImpact{from{opacity:1;transform:scale(.3)}to{opacity:0;transform:scale(1.9)}}
+.gungi-turn-toast{position:fixed;z-index:9999;top:18%;left:50%;transform:translateX(-50%);padding:12px 23px;background:#152435ed;border:1px solid #d7b77b;border-radius:12px;color:#f4d99c;font-weight:800;font-size:20px;pointer-events:none;box-shadow:0 6px 22px #0008;animation:gungiToast .85s ease-out forwards;white-space:nowrap}
+@keyframes gungiToast{0%{opacity:0;transform:translate(-50%,-14px) scale(.9)}18%,65%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-9px) scale(1.02)}}
+.gungi-win-shade{position:fixed;inset:0;z-index:9999;background:#080e19c9;display:flex;align-items:center;justify-content:center;padding:20px}
+.gungi-win-card{background:#1c2938;border:2px solid #e9c87b;border-radius:18px;padding:28px;text-align:center;color:#f7e2a9;box-shadow:0 16px 50px #000b;animation:gungiWin .4s ease-out}
+.gungi-win-card strong{display:block;font-size:30px;margin-bottom:14px}.gungi-win-card button{min-width:125px}
+@keyframes gungiWin{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.sq.legal::after,.sq.capture::after,.sq.selected{animation:none}.gungi-ghost,.gungi-impact,.gungi-turn-toast,.gungi-win-card{animation:none!important;transition:none!important}}
+
+.gungi-scoreboard{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0;padding:9px;border:1px solid #52647a;border-radius:10px;background:#192a3c}
+.gungi-score{flex:1;min-width:120px;text-align:center;font-weight:800;font-size:16px}
+.gungi-score small{display:block;font-weight:400;font-size:11px;color:#b9c8d8}
+</style></head><body><main><header><div><h1>軍儀 · Gungi Touch</h1><div class="muted">Safari Edition · iPhone / iPad · touch controls</div></div><div><button id="new">New game</button><button id="undo">Undo</button><button id="redo">Redo</button></div></header><div class="toolbar"><label>Opponent <select id="opponent"><option value="ai">Computer AI</option><option value="human">Two players</option><option value="auto">AI vs AI</option></select></label><label>AI level <select id="difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option><option value="expert">Expert</option></select></label><label id="autoSpeedLabel" style="display:none">AI speed <select id="autoSpeed"><option value="350">Fast</option><option value="850" selected>Normal</option><option value="1600">Slow</option></select></label><button id="autoPause" style="display:none">Pause AI</button></div><div class="toolbar"><label>Ruleset <select id="ruleset"><option value="introduction">Introduction</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced" selected>Advanced</option></select></label><label>Mode <select id="mode"><option value="setup">Alternating setup</option><option value="quick" selected>Quick start</option></select></label><label>First turn <select id="firstPlayer"><option value="red">🔴 Red first</option><option value="blue" selected>🔵 Blue first</option></select></label><button id="finish">Declare Done</button><button id="cancel">Cancel selection</button></div><div id="runtimeNotice" style="padding:9px 12px;background:#4d2d24;color:#fff1d7;border-radius:8px;margin:8px 0">Game engine not started. Open this HTML through a hosted Safari website; the iPad Files preview does not run the game engine.</div><div class="status"><strong id="turn"></strong><span id="phase"></span><span id="message" role="status"></span></div><div class="gungi-scoreboard" aria-live="polite"><div class="gungi-score redText">🔴 Red: <span id="redPoints">0</span><small>Material points</small></div><div class="gungi-score blueText">🔵 Blue: <span id="bluePoints">0</span><small>Material points</small></div></div><div class="game-layout"><aside class="side red-side"><h2>🔴 Red reserves</h2><p class="side-note">Red AI pieces in Computer AI mode.</p><div class="hand" id="redHand"></div></aside><div class="board-wrap"><div class="board" id="board" aria-label="9 by 9 Gungi board"><button class="sq" aria-label="Board square 1,1"></button><button class="sq" aria-label="Board square 2,1"></button><button class="sq" aria-label="Board square 3,1"></button><button class="sq" aria-label="Board square 4,1"></button><button class="sq" aria-label="Board square 5,1">🔵</button><button class="sq" aria-label="Board square 6,1"></button><button class="sq" aria-label="Board square 7,1"></button><button class="sq" aria-label="Board square 8,1"></button><button class="sq" aria-label="Board square 9,1"></button><button class="sq" aria-label="Board square 1,2"></button><button class="sq" aria-label="Board square 2,2"></button><button class="sq" aria-label="Board square 3,2"></button><button class="sq" aria-label="Board square 4,2"></button><button class="sq" aria-label="Board square 5,2"></button><button class="sq" aria-label="Board square 6,2"></button><button class="sq" aria-label="Board square 7,2"></button><button class="sq" aria-label="Board square 8,2"></button><button class="sq" aria-label="Board square 9,2"></button><button class="sq" aria-label="Board square 1,3"></button><button class="sq" aria-label="Board square 2,3"></button><button class="sq" aria-label="Board square 3,3"></button><button class="sq" aria-label="Board square 4,3"></button><button class="sq" aria-label="Board square 5,3"></button><button class="sq" aria-label="Board square 6,3"></button><button class="sq" aria-label="Board square 7,3"></button><button class="sq" aria-label="Board square 8,3"></button><button class="sq" aria-label="Board square 9,3"></button><button class="sq" aria-label="Board square 1,4"></button><button class="sq" aria-label="Board square 2,4"></button><button class="sq" aria-label="Board square 3,4"></button><button class="sq" aria-label="Board square 4,4"></button><button class="sq" aria-label="Board square 5,4"></button><button class="sq" aria-label="Board square 6,4"></button><button class="sq" aria-label="Board square 7,4"></button><button class="sq" aria-label="Board square 8,4"></button><button class="sq" aria-label="Board square 9,4"></button><button class="sq" aria-label="Board square 1,5"></button><button class="sq" aria-label="Board square 2,5"></button><button class="sq" aria-label="Board square 3,5"></button><button class="sq" aria-label="Board square 4,5"></button><button class="sq" aria-label="Board square 5,5"></button><button class="sq" aria-label="Board square 6,5"></button><button class="sq" aria-label="Board square 7,5"></button><button class="sq" aria-label="Board square 8,5"></button><button class="sq" aria-label="Board square 9,5"></button><button class="sq" aria-label="Board square 1,6"></button><button class="sq" aria-label="Board square 2,6"></button><button class="sq" aria-label="Board square 3,6"></button><button class="sq" aria-label="Board square 4,6"></button><button class="sq" aria-label="Board square 5,6"></button><button class="sq" aria-label="Board square 6,6"></button><button class="sq" aria-label="Board square 7,6"></button><button class="sq" aria-label="Board square 8,6"></button><button class="sq" aria-label="Board square 9,6"></button><button class="sq" aria-label="Board square 1,7"></button><button class="sq" aria-label="Board square 2,7"></button><button class="sq" aria-label="Board square 3,7"></button><button class="sq" aria-label="Board square 4,7"></button><button class="sq" aria-label="Board square 5,7"></button><button class="sq" aria-label="Board square 6,7"></button><button class="sq" aria-label="Board square 7,7"></button><button class="sq" aria-label="Board square 8,7"></button><button class="sq" aria-label="Board square 9,7"></button><button class="sq" aria-label="Board square 1,8"></button><button class="sq" aria-label="Board square 2,8"></button><button class="sq" aria-label="Board square 3,8"></button><button class="sq" aria-label="Board square 4,8"></button><button class="sq" aria-label="Board square 5,8"></button><button class="sq" aria-label="Board square 6,8"></button><button class="sq" aria-label="Board square 7,8"></button><button class="sq" aria-label="Board square 8,8"></button><button class="sq" aria-label="Board square 9,8"></button><button class="sq" aria-label="Board square 1,9"></button><button class="sq" aria-label="Board square 2,9"></button><button class="sq" aria-label="Board square 3,9"></button><button class="sq" aria-label="Board square 4,9"></button><button class="sq" aria-label="Board square 5,9">🔴</button><button class="sq" aria-label="Board square 6,9"></button><button class="sq" aria-label="Board square 7,9"></button><button class="sq" aria-label="Board square 8,9"></button><button class="sq" aria-label="Board square 9,9"></button></div></div><aside class="side blue-side"><h2>🔵 Blue reserves</h2><p class="side-note">You control Blue against the Red AI.</p><div class="hand" id="blueHand"></div></aside></div><div class="toolbar"><span class="muted">Columns 1–9 left to right; rows 1–9 top to bottom</span><button id="pass">Pass turn</button><button id="hint">Hint</button></div><div class="legend"><span>◆ Red moves up</span><span>◆ Blue moves down</span><span>◎ Green = legal</span><span>◉ Red ring = capture</span></div><details><summary>Rules & controls</summary><p>Choose a piece from your hand and tap a highlighted square to deploy. Tap one of your own towers to select its top piece, then tap a highlighted destination. Tap the selected tower again to deselect. Towers can contain up to two or three pieces depending on ruleset; only the top piece moves. You can move onto friendly towers to stack, or onto an enemy tower to capture all enemy pieces (preserving friendly pieces), or to stack instead. Captured pieces leave the game; there is no captured-piece hand.</p><p>During setup, alternate placing pieces in your own three rows. Kings must be placed before setup can end. Stacking up to the ruleset limit is allowed during setup; no two friendly Pawns in the same column during setup. Select “Finish setup” after both Marshals are down, or use Quick start for a full preset deployment. During play, Arata drops can reach as far as your most advanced friendly piece. Capturing a King wins.</p><p>Quick Start uses a balanced full-roster house preset (not the rulebook’s illustrated configuration). Custom piece names and symbols are shown in each reserve. All 14 rulebook piece types are included (with their rulebook names). Movement grows with tower tier. Blue advances down; Red advances up. Movement is adapted from the supplied rulebook diagrams. Tier 2 and Tier 3 add to the lower-tier moves. Optional Captain escort and Cannon vault are house rules, disabled by default; the photographed movement charts do not establish those abilities. Movement diagrams still require exact rulebook comparison. Check/checkmate is not implemented. Fourfold repetition of the same complete position is a draw. Enemy towers of equal or lower height can be captured; enemy pieces are removed while friendly pieces remain. Long non-jumping moves cannot pass through occupied squares.</p><div id="movelist" class="small"></div></details><details><summary>Special abilities and AI</summary><p><b>Optional house-rule Captain escort (off by default):</b> when a Captain is on top of a friendly stack, moving it may carry the friendly piece immediately underneath, provided both fit at the destination and the ruleset permits the stack. Enable or disable the escort using the checkbox below.</p><p><b>Optional house-rule Cannon vault (off by default):</b> Cannons at tier 2+ may vault over exactly one occupied square in a straight line, landing on the square immediately beyond it; landing follows standard stack and capture restrictions.</p><p><b>AI levels:</b> Easy chooses randomly; Medium evaluates material and position; Hard and Expert look ahead at opposing responses with increasingly broad searches. AI controls Red in Computer AI mode, or both colors in AI vs AI mode. AI decisions are heuristic, not guaranteed optimal.</p><label><input id="escort" type="checkbox"> Enable Captain escort</label> <label><input id="vault" type="checkbox"> Enable Cannon vault</label></details><details><summary>Rule verification</summary><p><b>Verified from supplied rulebook page 5:</b> Cannon, Musketeer, and Archer can jump over friendly or enemy towers only if the crossed tower is the same height or lower than the jumping piece. Tier 2 and 3 retain earlier movement options.</p><p><b>Still provisional:</b> points after two passes, and optional Captain Escort/Cannon Vault. These are not established by the supplied movement pages.</p></details><details><summary>Move history</summary><div id="log"></div></details><p class="muted">Points house rule: all remaining non-King pieces on the board and in reserves count toward each color’s score. Fourfold repetition of the same complete position (including side to move and reserves) ends in a draw. Two consecutive passes during play end the game; higher score wins, equal scores draw. Capturing the King still wins immediately.</p><p class="muted">For iOS, open this game as a hosted webpage in Safari; Files Quick Look may block JavaScript. For an app-like shortcut, choose Share → Add to Home Screen. All game logic runs locally in your browser.</p></main><script>
+(()=>{'use strict';
+// Motion effects are cosmetic and never alter legal moves or game state.
+const motionReduced=()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let motionTimer=0;
+function motionSquare(x,y){return $('board').children[y*9+x]||null;}
+function motionToast(label){if(motionReduced())return;const el=document.createElement('div');el.className='gungi-turn-toast';el.textContent=label;document.body.append(el);setTimeout(()=>el.remove(),900);}
+function motionImpact(rect){if(motionReduced())return;const el=document.createElement('div');el.className='gungi-impact';const size=Math.max(25,rect.width*.85);Object.assign(el.style,{width:size+'px',height:size+'px',left:(rect.left+(rect.width-size)/2)+'px',top:(rect.top+(rect.height-size)/2)+'px'});document.body.append(el);setTimeout(()=>el.remove(),480);}
+function motionWin(winner){document.querySelector('.gungi-win-shade')?.remove();const shade=document.createElement('div');shade.className='gungi-win-shade';const card=document.createElement('div');card.className='gungi-win-card';const title=document.createElement('strong');title.textContent=name(winner)+' wins!';const detail=document.createElement('p');detail.textContent='The King has been captured.';const close=document.createElement('button');close.textContent='Close';close.onclick=()=>shade.remove();card.append(title,detail,close);shade.append(card);document.body.append(shade);}
+function motionAction(a,actor,kind,fromRect,toRect,icon){
+  if(motionReduced()||!toRect)return;
+  const src=fromRect||toRect;
+  const ghost=document.createElement('div');ghost.className='gungi-ghost '+actor;
+  ghost.textContent=icon;
+  const size=Math.min(src.width,src.height)*.7;
+  Object.assign(ghost.style,{width:size+'px',height:size+'px',left:(src.left+(src.width-size)/2)+'px',top:(src.top+(src.height-size)/2)+'px',fontSize:Math.max(14,size*.52)+'px'});
+  document.body.append(ghost);
+  const dx=(toRect.left+toRect.width/2)-(src.left+src.width/2);
+  const dy=(toRect.top+toRect.height/2)-(src.top+src.height/2);
+  const jump=['Cannon','Archer','Musketeer','Knight'].includes(kind);
+  const special=['Shinobi','Captain'].includes(kind);
+  const frames=[{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx*.5}px,${dy*.5-(jump?Math.max(25,src.height*.75):12)}px) scale(${special?1.14:1.04})`,opacity:special?.7:1},{transform:`translate(${dx}px,${dy}px) scale(.94)`,opacity:0}];
+  const anim=ghost.animate(frames,{duration:jump?440:320,easing:'ease-in-out',fill:'forwards'});
+  anim.onfinish=()=>ghost.remove();setTimeout(()=>ghost.remove(),600);
+}
+
+document.getElementById('runtimeNotice').style.display='none';
+ const N=9,types=['King','Prince','Duke','Major General','Soldier','Shinobi','Cannon','Fortress','Samurai','Spear','Knight','Archer','Musketeer','Captain'],glyph=['K','♔','☆','✦','ⓧ','忍','砲','⬟','X','⚑','♞','➶','⌁','◆'];
+ const bookName={'King':'Marshal','Prince':'General','Duke':'Lieutenant General','Soldier':'Pawn','Shinobi':'Spy'};const pieceName=t=>bookName[t]||t;
+ const initial={'King':1,'Prince':1,'Duke':1,'Major General':2,'Soldier':4,'Shinobi':2,'Cannon':1,'Fortress':2,'Samurai':2,'Spear':3,'Knight':2,'Archer':2,'Musketeer':1,'Captain':1};
+ const value={'King':10000,'Prince':100,'Duke':100,'Major General':70,'Soldier':20,'Shinobi':65,'Cannon':80,'Fortress':60,'Samurai':55,'Spear':55,'Knight':65,'Archer':65,'Musketeer':60,'Captain':85};
+ const limit=()=>$('ruleset').value==='advanced'?3:2;
+ const allowed=t=>$('ruleset').value==='introduction'?!['Cannon','Archer','Musketeer','Captain'].includes(t):$('ruleset').value==='beginner'?!['Cannon','Musketeer','Captain'].includes(t):true;
+ const kingStack=()=>['intermediate','advanced'].includes($('ruleset').value);
+const dirs8=[[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]],orth=dirs8.slice(0,4),diag=dirs8.slice(4);
+const $=id=>document.getElementById(id),inside=(x,y)=>x>=0&&x<9&&y>=0&&y<9,opp=p=>p==='red'?'blue':'red',name=p=>p==='red'?'Red':'Blue',home=(p,y)=>p==='blue'?y<3:y>=6,fw=p=>p==='blue'?1:-1,top=s=>s[s.length-1],clone=o=>JSON.parse(JSON.stringify(o));
+let state,undo=[],redo=[],selected=null,legal=[],busy=false,last=null,notice='',aiTicket=0;
+function fresh(){return {board:Array.from({length:9},()=>Array.from({length:9},()=>[])),hands:{red:{...initial},blue:{...initial}},player:$('firstPlayer').value,phase:$('mode').value==='quick'?'play':'setup',finished:false,winner:null,setupDone:{red:false,blue:false},consecutivePasses:0,ending:null,log:[],positions:{}};}
+// Rulebook: fourth occurrence of the same complete position is a draw.
+// Includes side to move, ordered stacks and reserves. Exact rulebook repetition
+// penalty remains unverified; this avoids inventing a player forfeiture.
+function positionKey(s){return JSON.stringify([s.player,s.board.map(row=>row.map(stack=>stack.map(z=>[z.p,z.t]))),['blue','red'].map(p=>types.map(t=>s.hands[p][t]))]);}
+function recordPosition(s){if(s.phase!=='play'||s.finished)return;const k=positionKey(s);s.positions??={};s.positions[k]=(s.positions[k]||0)+1;if(s.positions[k]>=4){s.finished=true;s.winner=null;s.ending='repetition';s.log.push('Fourfold repetition — draw (rulebook).');}}
+function showRepetitionResult(){document.querySelector('.gungi-win-shade')?.remove();const shade=document.createElement('div');shade.className='gungi-win-shade';const card=document.createElement('div');card.className='gungi-win-card';const title=document.createElement('strong');title.textContent='Draw by repetition';const detail=document.createElement('p');detail.textContent='The same board position and player to move occurred four times (rulebook draw rule).';const close=document.createElement('button');close.textContent='Close';close.onclick=()=>shade.remove();card.append(title,detail,close);shade.append(card);document.body.append(shade);}
+// House-rule tiebreaker: all surviving non-King pieces, including reserves.
+// King capture still wins immediately; scores matter only after two consecutive passes.
+function materialPoints(s,p){let total=0;for(const row of s.board)for(const stack of row)for(const z of stack)if(z.p===p&&z.t!=='King')total+=value[z.t];for(const t of types)if(t!=='King'&&allowed(t))total+=(s.hands[p][t]||0)*value[t];return total;}
+function finishByPoints(s){const r=materialPoints(s,'red'),b=materialPoints(s,'blue');s.finished=true;s.winner=r===b?null:r>b?'red':'blue';s.ending='points';s.log.push(`Stalemate: Red ${r} – Blue ${b}. ${s.winner?name(s.winner)+' wins':'Draw'}.`);}
+function passPlayer(s){s.log.push(`${name(s.player)} passes`);s.consecutivePasses=(s.consecutivePasses||0)+1;if(s.phase==='play'&&s.consecutivePasses>=2)finishByPoints(s);else {s.player=opp(s.player);recordPosition(s);}}
+function showPointResult(){document.querySelector('.gungi-win-shade')?.remove();const shade=document.createElement('div');shade.className='gungi-win-shade';const card=document.createElement('div');card.className='gungi-win-card';const title=document.createElement('strong');title.textContent=state.winner?name(state.winner)+' wins on points!':'Draw on points!';const detail=document.createElement('p');detail.textContent=`Stalemate after two consecutive passes. Red ${materialPoints(state,'red')} – Blue ${materialPoints(state,'blue')}.`;const close=document.createElement('button');close.textContent='Close';close.onclick=()=>shade.remove();card.append(title,detail,close);shade.append(card);document.body.append(shade);}
+function place(s,x,y,p,t){s.board[y][x].push({p,t});s.hands[p][t]--;}
+let autoPaused=false,autoMoves=0;
+
+// Quick Start deploys the complete legal starting roster (not the old 6-piece demo).
+// This is a balanced house preset, NOT a transcription of the rulebook's illustrated configurations.
+// No starting stacks; each side stays within its own three ranks.
+const presetRows=[
+ ['Fortress','Knight','Samurai','Duke','King','Prince','Samurai','Knight','Fortress'],
+ ['Spear','Shinobi','Major General','Cannon','Captain','Major General','Shinobi','Spear','Spear'],
+ ['Archer','Soldier','Soldier','Musketeer','Soldier','Soldier','Archer',null,null]
+];
+function deployQuickPreset(s){
+ for(const p of ['blue','red'])for(let r=0;r<3;r++)for(let x=0;x<9;x++){
+  const t=presetRows[r][x];if(!t||!allowed(t))continue;
+  // Blue at top, Red at bottom, each facing the opposing side.
+  const y=p==='blue'?r:8-r;
+  place(s,x,y,p,t);
+ }
+}
+function reset(){autoPaused=false;autoMoves=0;$('autoPause').textContent='Pause AI';document.querySelector('.gungi-win-shade')?.remove();aiTicket++;state=fresh();undo=[];redo=[];selected=null;legal=[];busy=false;last=null;if(state.phase==='play'){deployQuickPreset(state);recordPosition(state);}render(state.phase==='play'?'Default starting formation ready.':'');scheduleAI();}
+function pushUndo(){undo.push(clone(state));if(undo.length>160)undo.shift();redo=[];}
+function pawnFile(s,p,x){return s.board.some(row=>row[x].some(z=>z.p===p&&z.t==='Soldier'));}
+ function targets(s,x,y){const st=s.board[y][x];if(s.phase!=='play'||!st.length)return [];
+ const p=top(st).p,t=top(st).t,tier=st.length,f=fw(p),result=[],seen=new Set();
+ function add(nx,ny,jump=false){
+   if(!inside(nx,ny)||(nx===x&&ny===y))return;
+   const d=s.board[ny][nx],enemy=d.length&&top(d).p!==p;
+    // Opposing towers can be captured or stacked upon if no taller than the attacker.
+    if(d.length && d.length>tier)return;
+    if(d.length>=limit() && !enemy)return;
+   if(enemy && d.filter(z=>z.p===p).length+1>limit())return;
+   const dx=nx-x,dy=ny-y,dist=Math.max(Math.abs(dx),Math.abs(dy));
+   if(dist>1){
+     const sx=Math.sign(dx),sy=Math.sign(dy);
+     if(dx!==0&&dy!==0&&Math.abs(dx)!==Math.abs(dy))return;
+     for(let i=1;i<dist;i++){
+       const obstacle=s.board[y+sy*i][x+sx*i];
+       // Rulebook p. 5: designated jumpers may cross either color,
+       // but only towers at or below the jumping piece's own tier.
+       if(jump){if(obstacle.length>tier)return;}
+       else if(obstacle.length)return;
+     }
+   }
+    if(d.some(z=>z.t==='King'&&z.p===p))return; // Never stack onto a friendly Marshal; enemy Marshal may be captured.
+    if(t==='King'&&d.length&&!kingStack())return;
+   const k=nx+','+ny;if(!seen.has(k)){seen.add(k);result.push([nx,ny]);}
+ }
+ function step(ds,jump=false){for(const [dx,dy] of ds)add(x+dx,y+dy,jump);}
+ // House-rule Cannon vault: exactly one occupied intervening square, and a landing
+ // immediately beyond it. This is distinct from the Cannon's diagrammed moves.
+ function cannonVault(){
+   if(tier<2||!$('vault').checked)return;
+   for(const [dx,dy] of cross){
+     const [sx,sy]=[x+dx,y+dy], [nx,ny]=[x+2*dx,y+2*dy];
+     if(inside(sx,sy)&&inside(nx,ny)&&s.board[sy][sx].length)add(nx,ny,true);
+   }
+ }
+ function ray(ds){for(const [dx,dy] of ds){for(let k=1;k<9;k++){const nx=x+dx*k,ny=y+dy*k;if(!inside(nx,ny))break;add(nx,ny);if(s.board[ny][nx].length)break;}}}
+ const v=(pairs)=>pairs.map(([dx,dy])=>[dx,dy*f]);
+ const forward=[[0,1]],back=[[0,-1]],sides=[[1,0],[-1,0]],fd=[[1,1],[-1,1]],bd=[[1,-1],[-1,-1]];
+ const cross=[...forward,...back,...sides],diagonals=[...fd,...bd];
+ // Light blue (tier 1), dark blue (tier 2), green (tier 3); red = unbounded sliding rays.
+ switch(t){
+ case 'King':step(v([...cross,...diagonals]));if(tier>=2)step(v([[0,2],[0,-2],[2,0],[-2,0],[2,2],[-2,2],[2,-2],[-2,-2]]));if(tier>=3)step(v([[0,3],[0,-3],[3,0],[-3,0],[3,3],[-3,3],[3,-3],[-3,-3]]));break;
+ case 'Prince':step(v(diagonals));ray(v(cross));if(tier>=2)step(v([[2,2],[-2,2],[2,-2],[-2,-2]]));if(tier>=3)step(v([[3,3],[-3,3],[3,-3],[-3,-3]]));break;
+ case 'Duke':step(v(cross));ray(v(diagonals));if(tier>=2)step(v([[0,2],[0,-2],[2,0],[-2,0]]));if(tier>=3)step(v([[0,3],[0,-3],[3,0],[-3,0]]));break;
+ case 'Major General':step(v([...cross,...fd]));if(tier>=2)step(v([[0,2],[0,-2],[2,0],[-2,0],[2,2],[-2,2]]));if(tier>=3)step(v([[0,3],[0,-3],[3,0],[-3,0],[3,3],[-3,3]]));break;
+ case 'Samurai':step(v([...forward,...back,...fd]));if(tier>=2)step(v([[0,2],[0,-2],[2,2],[-2,2]]));if(tier>=3)step(v([[0,3],[0,-3],[3,3],[-3,3]]));break;
+ case 'Spear':step(v([[0,1],[0,2],...fd,...back]));if(tier>=2)step(v([[0,3],[2,2],[-2,2],[0,-2]]));if(tier>=3)step(v([[0,4],[3,3],[-3,3],[0,-3]]));break;
+ case 'Knight':step(v([[0,1],[0,2],[0,-1],[0,-2],...sides]));if(tier>=2)step(v([[0,3],[0,-3],[2,0],[-2,0]]));if(tier>=3)step(v([[0,4],[0,-4],[3,0],[-3,0]]));break;
+ case 'Shinobi':step(v(diagonals.map(([dx,dy])=>[dx*2,dy*2])),true);if(tier>=2)step(v(diagonals.map(([dx,dy])=>[dx*3,dy*3])),true);if(tier>=3)step(v(diagonals.map(([dx,dy])=>[dx*4,dy*4])),true);break;
+ case 'Fortress':step(v([...forward,...sides,...bd]));if(tier>=2)step(v([[0,2],[2,0],[-2,0],[2,-2],[-2,-2]]));if(tier>=3)step(v([[0,3],[3,0],[-3,0],[3,-3],[-3,-3]]));break;
+ case 'Soldier':step(v([...forward,...back]));if(tier>=2)step(v([[0,2],[0,-2]]));if(tier>=3)step(v([[0,3],[0,-3]]));break;
+ case 'Cannon':step(v([...back,...sides]));step(v([[0,3]]),true);cannonVault();if(tier>=2){step(v([[0,-2],[2,0],[-2,0]]));step(v([[0,4]]),true);}if(tier>=3){step(v([[0,-3],[3,0],[-3,0]]));step(v([[0,5]]),true);}break;
+ case 'Archer':step(v(back));step(v([[0,2],...fd.map(([dx,dy])=>[dx*2,dy*2])]),true);if(tier>=2){step(v([[0,-2]]));step(v([[0,3],[3,3],[-3,3]]),true);}if(tier>=3){step(v([[0,-3]]));step(v([[0,4],[4,4],[-4,4]]),true);}break;
+ case 'Musketeer':step(v(bd));step(v([[0,2]]),true);if(tier>=2){step(v([[2,-2],[-2,-2]]));step(v([[0,3]]),true);}if(tier>=3){step(v([[3,-3],[-3,-3]]));step(v([[0,4]]),true);}break;
+ case 'Captain':step(v([...fd,...back]));if(tier>=2)step(v([[2,2],[-2,2],[0,-2]]));if(tier>=3)step(v([[3,3],[-3,3],[0,-3]]));break;
+ }
+ return result;}
+ function drops(s,p,t){
+ const out=[];if(s.hands[p][t]<=0||!allowed(t)||s.setupDone?.[p])return out;
+ // Arata: from own board edge through the furthest advanced friendly piece.
+ let furthest=p==='blue'?2:6;
+ if(s.phase==='play')for(let y=0;y<9;y++)for(const stack of s.board[y])if(stack.some(z=>z.p===p))furthest=p==='blue'?Math.max(furthest,y):Math.min(furthest,y);
+ for(let y=0;y<9;y++)for(let x=0;x<9;x++){
+  if(s.phase==='setup'?!home(p,y):(p==='blue'?y>furthest:y<furthest))continue;
+  const d=s.board[y][x];
+  if(d.length>=limit()||d.some(z=>z.t==='King')||d.length&&top(d).p!==p)continue;
+  if(t==='King'&&d.length&&!kingStack())continue;
+  if(t==='Soldier'&&s.phase==='setup'&&pawnFile(s,p,x))continue;
+  out.push([x,y]);
+ }return out;
+}
+function actions(s,p,limitDrops=true){let a=[];if(s.phase==='play')for(let y=0;y<9;y++)for(let x=0;x<9;x++){const st=s.board[y][x];if(st.length&&top(st).p===p)for(const [nx,ny] of targets(s,x,y))a.push({kind:'move',x,y,nx,ny});}
+for(const t of types){if(!s.hands[p][t]||!allowed(t))continue;const ds=drops(s,p,t);for(const [nx,ny] of ds){if(!limitDrops||t==='King'||t==='Prince'||t==='Cannon'||t==='Captain'||t==='Soldier')a.push({kind:'drop',t,nx,ny});}}
+return a;}
+ function apply(s,a){
+ const p=s.player,d=s.board[a.ny][a.nx];let captured=null,description='';
+ if(a.kind==='drop'){
+  place(s,a.nx,a.ny,p,a.t);
+  description=`${name(p)} deploys ${pieceName(a.t)} (${a.nx+1},${a.ny+1})`;
+ }else{
+  const from=s.board[a.y][a.x],piece=from.pop();
+  if(d.length&&top(d).p!==p){
+   if(a.mode==='stack'){
+    // Enemy stack remains below the arriving piece.
+    d.push(piece);
+    description=`${name(p)} stacks ${pieceName(piece.t)} on enemy tower at ${a.nx+1},${a.ny+1}`;
+   }else{
+    const removed=d.filter(z=>z.p!==p);
+    d.splice(0,d.length,...d.filter(z=>z.p===p));
+    captured=removed.find(z=>z.t==='King')||removed[0]||null;
+    d.push(piece);
+    description=`${name(p)} ${pieceName(piece.t)} captures ${removed.map(z=>pieceName(z.t)).join(', ')} at ${a.nx+1},${a.ny+1}`;
+   }
+  }else{
+   d.push(piece);
+   description=`${name(p)} ${pieceName(piece.t)} ${a.x+1},${a.y+1} → ${a.nx+1},${a.ny+1}`;
+  }
+  // Captain Turncoat: only on the turn Captain is attached to an enemy tower.
+  if(piece.t==='Captain'&&a.mode==='stack'&&d.length>1){
+   let changed=0;
+   for(let i=d.length-2;i>=Math.max(0,d.length-3);i--){
+    const z=d[i];
+    if(z.p!==p&&(s.hands[p][z.t]||0)>0){s.hands[p][z.t]--;d[i]={p,t:z.t};changed++;}
+   }
+   if(changed)description+=` (Turncoat ×${changed})`;
+  }
+ }
+ s.consecutivePasses=0;s.log.push(description);
+ if(captured?.t==='King'){s.finished=true;s.winner=p;s.ending='king';}
+ else if(s.phase==='setup')s.player=s.setupDone[opp(p)]?p:opp(p);
+ else{s.player=opp(p);recordPosition(s);}
+ return captured;
+}
+function validSelection(){if(!selected)return [];if(selected.kind==='drop')return drops(state,state.player,selected.t);return targets(state,selected.x,selected.y);}
+function doAction(a){
+ if(state.finished||!actions(state,state.player,false).some(b=>b.kind===a.kind&&b.nx===a.nx&&b.ny===a.ny&&(a.kind==='drop'?b.t===a.t:b.x===a.x&&b.y===a.y))){render('That move is no longer legal.');return;}
+ const actor=state.player;
+ const source=a.kind==='move'?motionSquare(a.x,a.y):null;
+ const dest=motionSquare(a.nx,a.ny);
+ const fromRect=source?source.getBoundingClientRect():null;
+ const toRect=dest?dest.getBoundingClientRect():null;
+ const pieceType=a.kind==='drop'?a.t:top(state.board[a.y][a.x]).t;
+ const pieceIcon=glyph[types.indexOf(pieceType)];
+ const beforeStack=state.board[a.ny][a.nx].length;
+ const captured=beforeStack&&top(state.board[a.ny][a.nx]).p!==actor;
+  if(state.phase==='play'&&a.kind==='move'&&captured&&a.mode===undefined&&$('opponent').value!=='auto'&&!( $('opponent').value==='ai'&&actor==='red')){a.mode=state.board[a.ny][a.nx].length>=limit()?'capture':(confirm('Capture the enemy tower? OK = capture; Cancel = stack.')?'capture':'stack');}
+ pushUndo();apply(state,a);last=[a.nx,a.ny];selected=null;legal=[];
+ render(state.finished?(state.ending==='repetition'?'Draw by fourfold repetition.':`${name(state.winner)} wins — Marshal captured!`):'');
+ motionAction(a,actor,pieceType,fromRect,toRect,pieceIcon);
+ if(captured&&toRect)motionImpact(toRect);
+ if(!state.finished){motionToast(name(state.player)+' turn');if(state.phase==='play')scheduleAI();}
+ else if(state.ending==='repetition')showRepetitionResult();else motionWin(state.winner);
+}
+function tap(x,y){if(busy||state.finished||$('opponent').value==='auto'||($('opponent').value==='ai'&&state.player==='red'))return;const p=state.player,st=state.board[y][x];if(selected&&legal.some(([a,b])=>a===x&&b===y)){doAction({...selected,nx:x,ny:y});return;}if(state.phase==='play'&&st.length&&top(st).p===p){selected=selected?.kind==='move'&&selected.x===x&&selected.y===y?null:{kind:'move',x,y};legal=validSelection();render('');return;}selected=null;legal=[];render('Choose a piece in your hand or one of your towers.');}
+function choose(t){if(busy||state.finished||$('opponent').value==='auto'||($('opponent').value==='ai'&&state.player==='red'))return;selected={kind:'drop',t};legal=validSelection();render(legal.length?'':'No legal deployment square.');}
+function score(s,p){if(s.finished)return s.winner===p?100000:-100000;let total=0;for(let y=0;y<9;y++)for(let x=0;x<9;x++){const st=s.board[y][x];for(let i=0;i<st.length;i++){const z=st[i],sign=z.p===p?1:-1;total+=sign*(value[z.t]+i*12+(z.t==='King'?0:(z.p==='blue'?y:8-y)*2));}}for(const side of ['red','blue'])for(const t of types)total+=(side===p?1:-1)*s.hands[side][t]*value[t]*.65;return total;}
+function candidates(s,p,max){let arr=actions(s,p);arr.sort((a,b)=>priority(s,b,p)-priority(s,a,p));return arr.slice(0,max);}
+function priority(s,a,p){const d=s.board[a.ny][a.nx],enemy=d.length&&top(d).p!==p?value[top(d).t]:0;const piece=a.kind==='drop'?a.t:top(s.board[a.y][a.x]).t;return enemy*5+(a.kind==='move'?12:0)+(piece==='King'?-30:0)+((p==='blue'?a.ny:8-a.ny)*2)+Math.random()*.1;}
+function minimax(s,depth,root,alpha,beta,beam){if(depth===0||s.finished)return score(s,root);const p=s.player,arr=candidates(s,p,beam);if(!arr.length)return score(s,root);let best=p===root?-Infinity:Infinity;for(const a of arr){const n=clone(s);apply(n,a);const v=minimax(n,depth-1,root,alpha,beta,beam);if(p===root){best=Math.max(best,v);alpha=Math.max(alpha,best);}else{best=Math.min(best,v);beta=Math.min(beta,best);}if(beta<=alpha)break;}return best;}
+function chooseAI(s,p){let a=actions(s,p);if(!a.length)return null;const level=$('difficulty').value;if(level==='easy')return a[Math.floor(Math.random()*a.length)];const depth=level==='medium'?1:2,beam=level==='expert'?18:level==='hard'?9:12;a=candidates(s,p,level==='expert'?45:level==='hard'?28:30);let best=-Infinity,chosen=a[0];for(const move of a){const n=clone(s);apply(n,move);const v=depth===1?score(n,p):minimax(n,depth-1,p,-Infinity,Infinity,beam);if(v>best){best=v;chosen=move;}}return chosen;}
+function scheduleAI(){
+ const mode=$('opponent').value;
+ if(state.finished||state.phase!=='play'||mode==='human'||(mode==='ai'&&state.player!=='red')||(mode==='auto'&&autoPaused))return;
+ busy=true;render(mode==='auto'?name(state.player)+' AI thinking…':'Computer thinking…');
+ const ticket=++aiTicket;
+ const delay=mode==='auto'?Number($('autoSpeed').value):150;
+ setTimeout(()=>{
+  if(!busy||ticket!==aiTicket||state.finished||$('opponent').value!==mode||(mode==='auto'&&autoPaused))return;
+  const p=state.player;
+  const a=chooseAI(state,p);
+  busy=false;
+  if(a){
+   doAction(a);
+   if(mode==='auto'&&++autoMoves>=300&&!state.finished){autoPaused=true;aiTicket++;busy=false;$('autoPause').textContent='Resume AI';render('AI vs AI paused after 300 moves. Resume to continue.');}
+  }else{
+   pushUndo();passPlayer(state);render(state.finished?(state.ending==='repetition'?'Draw by repetition.':'Stalemate — points decide!'):name(p)+' AI passes.');
+   if(state.finished){if(state.ending==='repetition')showRepetitionResult();else showPointResult();}else scheduleAI();
+  }
+ },delay);
+}
+function render(msg){notice=msg;$('redPoints').textContent=materialPoints(state,'red');$('bluePoints').textContent=materialPoints(state,'blue');$('turn').textContent=state.finished?(state.winner?`${name(state.winner)} wins!`:'Draw!'):busy?'Computer thinking…':`${name(state.player)} to move`;$('turn').className=state.player==='red'?'redText':'blueText';$('phase').textContent=state.phase==='setup'?`Setup · ${state.setupDone.red?'Red done ':''}${state.setupDone.blue?'Blue done':''}`:'Play phase';$('message').textContent=msg;$('finish').disabled=state.phase!=='setup'||busy||state.finished||state.setupDone[state.player];$('pass').disabled=busy||state.finished;$('hint').disabled=busy||state.finished;$('undo').disabled=!undo.length;$('redo').disabled=!redo.length;$('difficulty').disabled=$('opponent').value==='human';$('autoSpeedLabel').style.display=$('opponent').value==='auto'?'':'none';$('autoPause').style.display=$('opponent').value==='auto'?'':'none';$('autoPause').textContent=autoPaused?'Resume AI':'Pause AI';document.querySelector('.blue-side .side-note').textContent=$('opponent').value==='auto'?'AI controls both colors. Pause to inspect the board.':$('opponent').value==='ai'?'You control Blue against Red AI.':'Blue player: tap a piece, then a highlighted square.';
+const b=$('board');b.replaceChildren();for(let y=0;y<9;y++)for(let x=0;x<9;x++){const sq=document.createElement('button'),st=state.board[y][x];sq.className='sq'+(home('red',y)||home('blue',y)?' territory':'');if(last&&last[0]===x&&last[1]===y)sq.classList.add('last');if(selected?.kind==='move'&&selected.x===x&&selected.y===y)sq.classList.add('selected');if(legal.some(([a,c])=>a===x&&c===y))sq.classList.add(st.length&&top(st).p!==state.player?'capture':'legal');sq.setAttribute('aria-label',`Column ${x+1}, row ${y+1}${st.length?' '+st.map(z=>z.p+' '+z.t).join(', '):''}`);if(st.length){const upper=top(st);const detail=`${name(upper.p)} ${pieceName(upper.t)} · Tier ${st.length}`+(st.length>1?`\nUnder: ${st.slice(0,-1).map(z=>pieceName(z.t)).join(', ')}`:'');sq.dataset.pieceTip=detail;sq.title=detail;}if(x===0||y===8){const co=document.createElement('span');co.className='coord';co.textContent=x===0?y+1:x+1;sq.append(co);}st.forEach((z,i)=>{const el=document.createElement('span');el.className=`token ${z.p}`;el.dataset.level=i;el.textContent=glyph[types.indexOf(z.t)];el.title=`${name(z.p)} ${pieceName(z.t)} · Tier ${i+1}`;sq.append(el);});if(st.length>1){const n=document.createElement('span');n.className='count';n.textContent=st.length;sq.append(n);}sq.onclick=()=>tap(x,y);b.append(sq);}
+for(const p of ['red','blue']){const hand=$(p+'Hand');hand.replaceChildren();for(const t of types){if(!allowed(t))continue;const btn=document.createElement('button');btn.textContent=`${glyph[types.indexOf(t)]} ${pieceName(t)} ×${state.hands[p][t]}`;if(state.hands[p][t]<=0)btn.classList.add('depleted');btn.disabled=state.hands[p][t]<=0||p!==state.player||busy||state.finished||$('opponent').value==='auto'||($('opponent').value==='ai'&&p==='red');if(selected?.kind==='drop'&&selected.t===t&&p===state.player)btn.classList.add('active');btn.onclick=()=>choose(t);hand.append(btn);}if(!hand.children.length)hand.textContent='No pieces remaining';}
+$('log').replaceChildren();state.log.slice().reverse().forEach((s,i)=>{const d=document.createElement('div');d.textContent=`${state.log.length-i}. ${s}`;$('log').append(d);});}
+$('new').onclick=reset;$('firstPlayer').onchange=reset;$('mode').onchange=reset;$('ruleset').onchange=reset;$('opponent').onchange=()=>{aiTicket++;busy=false;autoPaused=false;autoMoves=0;selected=null;legal=[];if($('opponent').value==='auto'&&$('mode').value==='setup'){$('mode').value='quick';reset();return;}render('Opponent changed.');scheduleAI();};$('autoPause').onclick=()=>{autoPaused=!autoPaused;aiTicket++;busy=false;render(autoPaused?'AI vs AI paused.':'AI vs AI resumed.');if(!autoPaused)scheduleAI();};$('difficulty').onchange=()=>render('AI difficulty updated.');$('cancel').onclick=()=>{selected=null;legal=[];render('');};
+$('undo').onclick=()=>{if($('opponent').value==='auto'){autoPaused=true;aiTicket++;busy=false;} document.querySelector('.gungi-win-shade')?.remove();if(!undo.length)return;aiTicket++;busy=false;redo.push(clone(state));state=undo.pop();if($('opponent').value==='ai'&&state.player==='red'&&undo.length){redo.push(clone(state));state=undo.pop();}selected=null;legal=[];last=null;render('Undone.');};$('redo').onclick=()=>{if($('opponent').value==='auto'){autoPaused=true;aiTicket++;busy=false;} if(!redo.length)return;aiTicket++;busy=false;undo.push(clone(state));state=redo.pop();selected=null;legal=[];render('Redone.');scheduleAI();};
+$('finish').onclick=()=>{
+ if(state.phase!=='setup'||state.setupDone[state.player])return;
+ const p=state.player;
+ const has=state.board.some(row=>row.some(st=>st.some(z=>z.p===p&&z.t==='King')));
+ if(!has){render('Deploy your Marshal before declaring Done.');return;}
+ pushUndo();state.setupDone[p]=true;selected=null;legal=[];
+ if(state.setupDone.red&&state.setupDone.blue){state.phase='play';state.player=$('firstPlayer').value;recordPosition(state);render('Both players finished setup.');scheduleAI();}
+ else{state.player=opp(p);render(`${name(p)} finished setup; ${name(state.player)} may continue placing.`);}
+};
+$('pass').onclick=()=>{if($('opponent').value==='ai'&&state.player==='red')return;if($('opponent').value==='auto'){render('Pause AI vs AI to inspect the game; passing is automatic.');return;}if(state.phase==='setup'){$('finish').click();return;}pushUndo();passPlayer(state);selected=null;legal=[];render(state.finished?(state.ending==='repetition'?'Draw by repetition.':'Stalemate — points decide!'):'');if(state.finished){if(state.ending==='repetition')showRepetitionResult();else showPointResult();}else scheduleAI();};
+$('hint').onclick=()=>{if($('opponent').value==='auto'){render('Hints are unavailable during AI vs AI.');return;}if(state.phase!=='play'){render('Finish setup first.');return;}const a=chooseAI(state,state.player);if(!a){render('No available actions.');return;}selected=a.kind==='move'?{kind:'move',x:a.x,y:a.y}:{kind:'drop',t:a.t};legal=validSelection();render(`Hint: ${a.kind==='drop'?'deploy '+a.t:'move '+top(state.board[a.y][a.x]).t} to (${a.nx+1}, ${a.ny+1}).`);};
+ const desc={'King':'Marshal: 1 square in all 8 directions; Tier 2 adds 2-square steps; Tier 3 adds 3-square steps','Prince':'General: unlimited horizontal and vertical rays, plus diagonal steps at 1 / 2 / 3 squares by tier','Duke':'Lieutenant General: unlimited diagonal rays, plus orthogonal steps at 1 / 2 / 3 squares by tier','Major General':'Orthogonal and forward-diagonal steps','Soldier':'Pawn: forward or backward 1 / 2 / 3 squares by tier','Shinobi':'Spy: diagonal jumps to 2 / 3 / 4 squares by tier','Cannon':'1 left, right or backward; forward jumps 3 / 4 / 5 squares by tier','Fortress':'Forward, sideways and backward-diagonal steps','Samurai':'Forward, backward and forward-diagonal steps','Spear':'Forward up to two, forward-diagonal one, backward one','Knight':'Forward/backward up to two and sideways one','Archer':'Backward steps 1 / 2 / 3; forward and forward-diagonal jumps 2 / 3 / 4 by tier','Musketeer':'Backward diagonal steps 1 / 2 / 3; forward jumps 2 / 3 / 4 by tier','Captain':'Forward diagonal one or backward one; additional reach by tier'};
+$('movelist').innerHTML=types.map(t=>`<p><b>${glyph[types.indexOf(t)]} ${t}</b> — ${desc[t]}</p>`).join('');reset();
+})();
+</script></body></html>
